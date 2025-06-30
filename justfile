@@ -7,7 +7,7 @@ init: (repl "-e 'using Pkg; Pkg.instantiate()'")
 run: (repl "main.jl")
 
 # Run the main script
-test: (repl "test/runtests.jl")
+test: (repl "example/siso.jl")
 
 # Run a Julia interactive shell
 repl command="":

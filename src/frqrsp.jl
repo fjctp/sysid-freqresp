@@ -1,22 +1,23 @@
 using DSP
 
 # Helper: Estimate Frequency Response Function (FRF)
-function estimate_frqrsp(y::Vector, u::Vector, fs::Float64; nfft=1024)
+function estimate_frqrsp(y::Vector, u::Vector, dt::Real; nfft=1024)
+    fs = 1/dt
+    nfft = length(u)
 
-    # PSD using Welch
-    Pxx = DSP.Periodograms.welch_pgram(u; fs=fs, nfft=512, window=hanning)
-    freq = DSP.Periodograms.freq(Pxx)
-    Puu = DSP.Periodograms.power(Pxx)
+    # PSD using Multitaper
+    psd_uu = mt_pgram(u; fs=fs, nfft=nfft, nw=4)
+    freq_uu = freq(psd_uu)
+    p_uu = power(psd_uu)
 
-    # Cross-PSD using multitaper
+    # Cross-PSD using Multitaper
     # Stack signals in matrix: channels × samples
-    XY = [y; u]
-    cpsd_mt = DSP.Periodograms.mt_cross_power_spectra(XY; fs=fs, nfft=512, nw=4)
-    C = DSP.Periodograms.power(cpsd_mt)   # dims: 2×2×length(freq)
-    Pyu = C[1,2,:]                       # cross-spectrum Y and U
+    UY = [reshape(u, 1, :); reshape(y, 1, :)]
+    cpsd_uy = mt_cross_power_spectra(UY; fs=fs, nfft=nfft, nw=4)
+    p_uy = cpsd_uy.power[1,2,:] # cross-spectrum Y and U
 
     # Estimate FRF: H = S_yu / S_uu
-    H = Pyu ./ Puu
+    H = p_uy ./ p_uu
 
-    return freq, H
+    return freq_uu, H
 end
