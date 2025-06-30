@@ -1,6 +1,6 @@
 using ControlSystems: tf, lsim
 
-function generateData(sys, t, u; noise::Bool=false)
-    y = lsim(sys, u, t)
-    return y, u, t
+function generateData(sys, u, t; noise::Bool=false)
+    res = lsim(sys, u, t)
+    return res.y, u, t
 end
