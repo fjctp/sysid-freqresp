@@ -19,5 +19,6 @@ function estimate_frqrsp(y::Vector, u::Vector, dt::Real; nfft=1024)
     # Estimate FRF: H = S_yu / S_uu
     H = p_uy ./ p_uu
 
+    # Skip first frequency, 0 rad/s. Cannot plot with log scale.
     return freq_uu[2:end], H[2:end]
 end
