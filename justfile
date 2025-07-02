@@ -3,11 +3,9 @@ set dotenv-load
 # Initialize the project for the first time by installing dependencies
 init: (repl "-e 'using Pkg; Pkg.instantiate()'")
 
-# Run the main script
-run: (repl "main.jl")
-
-# Run the main script
-test: (repl "example/siso.jl")
+# Run examples
+example-siso1: (repl "example/siso1.jl")
+example-siso2: (repl "example/siso2.jl")
 
 # Run a Julia interactive shell
 repl command="":
